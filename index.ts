@@ -1,7 +1,8 @@
 import express, {Request, Response} from 'express';
-import {listOfAccounts, listOfTokens} from './data';
 import jwt from 'jsonwebtoken';
 import {sha512} from 'js-sha512';
+import fs from 'fs';
+import { UserData, Token, Account, TokenResponse, TokenWithDetails} from './types';
 
 const app = express();
 
@@ -12,28 +13,6 @@ app.use(express.json());
 app.listen(PORT, ()=>{
     console.log(`Server listening at port ${PORT}`)
 });
-
-type UserData = {
-    id: number,
-    username: string,
-    password: string
-}
-
-type Token = {
-    userId: number,
-    token: string
-};
-
-const saveToken = (token: Token) => {
-    listOfTokens.push({
-        "tokenId": listOfAccounts.length + 1,
-        "userId": token.userId,
-        "token": token.token,
-        "creationDate": Date.now().toString(),
-        "expiresIn": "",
-        "active": true
-    });
-};
 
 const genToken = (userdata: UserData): Token =>{
     const tokenJWT: string = jwt.sign({
@@ -50,12 +29,58 @@ const genToken = (userdata: UserData): Token =>{
     return token;
 };
 
+const getAccounts = ()=>{
+    try {
+        const data = fs.readFileSync('./data/accounts.json', 'utf-8');
+        const parsedData= JSON.parse(data);
+        const account = parsedData;
+        return account;
+    } catch (error) {
+        console.log('Error reading file JSON:', error);
+        return []
+    }
+}
+const dataAccounts = getAccounts();
+
+console.log(dataAccounts);
+
+const getTokens = () =>{
+    try {
+        const data = fs.readFileSync('./data/listOfTokens.json', 'utf-8');
+        const tokenData: TokenResponse = JSON.parse(data);
+        return tokenData.listOfTokens;
+    } catch (error) {
+        console.log('Error reading file JSON:', error);
+        return []
+    }
+}
+
+const dataListOfTokens = getTokens();
+
+
+
+const saveToken = (token: Token) => {
+
+    const newToken: TokenWithDetails = {
+        tokenId: dataListOfTokens.length + 1,
+        userId: token.userId,
+        token: token.token,
+        creationDate: Date.now().toString(),
+        expiresIn: "1d",
+        active: true
+    };
+    dataListOfTokens.push(newToken);
+};
+
+const tokensData: TokenResponse = { listOfTokens: dataListOfTokens };
+fs.writeFileSync('./data/listOfTokens.json', JSON.stringify(tokensData, null, 2));
+
 // Account service
 
 app.post('/account/login', (req: Request, res: Response) => {
     const username : string =  String (req.body.username);
     const password : string =  String (req.body.password);
-    
+
     if(!username){
         res.status(400).json({
             sucess: false,
@@ -64,7 +89,7 @@ app.post('/account/login', (req: Request, res: Response) => {
         return;
     }
 
-    const user = listOfAccounts.find((u) => u.username === username);
+    const user = dataAccounts.accounts.find((u: Account) => u.username === username);
     if(!user){
         res.status(404).json({
             sucess: false,

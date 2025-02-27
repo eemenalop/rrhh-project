@@ -1,14 +1,15 @@
-const listOfAccounts = [{
+export const Accounts = [{
     "id": 1,
     "personal_id": "40224175485",
     "name": "Edgar",
     "lastname": "Mena",
     "username": "emena",
     "password": "testpassword",
+    "role": "",
     "active": true
 }];
 
-const listOfTokens = [{
+export const listOfTokens = [{
     "tokenId": 1,
     "userId": 1,
     "token": "token",
@@ -16,5 +17,3 @@ const listOfTokens = [{
     "expiresIn": "1d",
     "active": true
 }];
-
-export {listOfAccounts, listOfTokens};

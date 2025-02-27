@@ -1,0 +1,14 @@
+{ 
+    "accounts": [   
+        {
+            "id": 1,
+            "personal_id": "40224175485",
+            "name": "Edgar",
+            "lastname": "Mena",
+            "username": "emena",
+            "password": "testpassword",
+            "role": "",
+            "active": true
+        }   
+    ]
+}
