@@ -2,24 +2,40 @@ import express, {Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import {sha512} from 'js-sha512';
 import fs from 'fs';
-import { UserData, Token, Account, TokenResponse, TokenWithDetails} from './types';
+import { UserData, Token, Account, TokenResponse, TokenWithDetails } from './types';
+import dotenv from 'dotenv'
+import path from 'path';
 
 const app = express();
 
-const PORT: number = 3000;
+const PORT: number = 4000;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '/public')));
+app.use('/dist', express.static('dist'));
+app.use(express.static(path.join(__dirname, '../public')));
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+});
 
 app.listen(PORT, ()=>{
     console.log(`Server listening at port ${PORT}`)
 });
 
-const genToken = (userdata: UserData): Token =>{
+dotenv.config();
+
+const genToken = (userdata: UserData): Token => {
+    const secretKey = process.env.SECRET_KEY;
+    
+    if (!secretKey) {
+        throw new Error("SECRET_KEY is not defined");
+    }
     const tokenJWT: string = jwt.sign({
         userid: userdata.id,
         username: userdata.username,
         password: userdata.password
-    },"SECRET_KEY", {expiresIn: "1d"});
+    },secretKey, {expiresIn: "1d"});
 
     const token: Token = {
         userId: userdata.id,
@@ -52,10 +68,24 @@ const getTokens = () =>{
         return []
     }
 }
-
 const dataListOfTokens = getTokens();
 
-// Account service
+app.get('/', (req: Request, res: Response) => {
+    const token = req.headers['authorization'];
+    if (!token) {
+        return res.sendFile(path.join(__dirname, '..','public','login.html'));
+    }
+
+    jwt.verify(token as string, process.env.SECRET_KEY as string, (err, decoded) => {
+        if (err) {
+            return res.sendFile(path.join(__dirname, 'public', 'login.html'));
+        }
+        res.status(200).json({ success: true, message: 'Welcome to the HOME page'})
+        
+    });
+});
+
+// Account login
 
 app.post('/account/login', (req: Request, res: Response) => {
     const username : string =  String (req.body.username);
@@ -73,7 +103,7 @@ app.post('/account/login', (req: Request, res: Response) => {
     if(!user){
         res.status(404).json({
             sucess: false,
-            message: `Username: ${user}, not found`
+            message: `Incorrect credential`
         });
         return;
     }
