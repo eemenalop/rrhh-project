@@ -13,10 +13,8 @@ document.getElementById('login')?.addEventListener('submit', async function(even
             body: JSON.stringify({ username, password })
         })
         const data = await response.json();
-        console.log(data)
         
-        if (data.sucess) {
-            console.log("Redirecting to /home.html");
+        if (data.success) {
             window.location.href = '/home.html'
             } else {
                 alert(data.message);
