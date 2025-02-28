@@ -42,8 +42,6 @@ const getAccounts = ()=>{
 }
 const dataAccounts = getAccounts();
 
-console.log(dataAccounts);
-
 const getTokens = () =>{
     try {
         const data = fs.readFileSync('./data/listOfTokens.json', 'utf-8');
@@ -56,24 +54,6 @@ const getTokens = () =>{
 }
 
 const dataListOfTokens = getTokens();
-
-
-
-const saveToken = (token: Token) => {
-
-    const newToken: TokenWithDetails = {
-        tokenId: dataListOfTokens.length + 1,
-        userId: token.userId,
-        token: token.token,
-        creationDate: Date.now().toString(),
-        expiresIn: "1d",
-        active: true
-    };
-    dataListOfTokens.push(newToken);
-};
-
-const tokensData: TokenResponse = { listOfTokens: dataListOfTokens };
-fs.writeFileSync('./data/listOfTokens.json', JSON.stringify(tokensData, null, 2));
 
 // Account service
 
@@ -119,8 +99,6 @@ app.post('/account/login', (req: Request, res: Response) => {
         password: hashedPassword
     })
 
-    saveToken(token);
-
     //Clear sesion
 
     /**const funcSessionData = () =>{
@@ -144,6 +122,22 @@ app.post('/account/login', (req: Request, res: Response) => {
     }
 
     getCookie();*/
+
+    const saveToken = (token: Token) => {
+
+        const newToken: TokenWithDetails = {
+            tokenId: dataListOfTokens.length + 1,
+            userId: token.userId,
+            token: token.token,
+            creationDate: Date.now().toString(),
+            expiresIn: "1d",
+            active: true
+        };
+        dataListOfTokens.push(newToken);
+        const tokensData: TokenResponse = { listOfTokens: dataListOfTokens };
+        fs.writeFileSync('./data/listOfTokens.json', JSON.stringify(tokensData, null, 2));
+    };
+    saveToken(token);
     
     res.status(200).json({
         success: true,

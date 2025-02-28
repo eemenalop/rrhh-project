@@ -7,6 +7,14 @@
       "creationDate": "26/02/25",
       "expiresIn": "1d",
       "active": true
+    },
+    {
+      "tokenId": 2,
+      "userId": 2,
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjIsInVzZXJuYW1lIjoiamxvcGV6IiwicGFzc3dvcmQiOiJlOWU2MzMwOTdhYjljZWIzZTQ4ZWMzZjcwZWUyYmViYTQxZDA1ZDU0MjBlZmVlNWRhODVmOTdkOTcwMDU3Mjc1ODdmZGEzM2VmNGZmMjMyMjA4OGY0Yzc5ZTgxMzNjYzljZDlmMzUxMmY0ZDNhMzAzY2JkYjViYzU4NTQxNWEwMCIsImlhdCI6MTc0MDcwNTY2MywiZXhwIjoxNzQwNzkyMDYzfQ.vtnpaX_wmuuBjqqRVU9zZ1D8C_ZKspNbl0hAsKUceok",
+      "creationDate": "1740705663513",
+      "expiresIn": "1d",
+      "active": true
     }
   ]
 }

@@ -9,6 +9,16 @@
             "password": "testpassword",
             "role": "",
             "active": true
-        }   
+        },
+        {
+            "id": 2,
+            "personal_id": "40235685965",
+            "name": "Jose",
+            "lastname": "Lopez",
+            "username": "jlopez",
+            "password": "testpassword",
+            "role": "",
+            "active": true
+        }
     ]
 }
