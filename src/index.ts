@@ -5,20 +5,12 @@ import fs from 'fs';
 import { UserData, Token, Account, TokenResponse, TokenWithDetails } from './types';
 import dotenv from 'dotenv'
 import path from 'path';
-
-const app = express();
-
-const PORT: number = 4000;
+import { PORT } from './config';
+import { app } from './config';
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '/public')));
 app.use('/dist', express.static('dist'));
 app.use(express.static(path.join(__dirname, '../public')));
-app.use((req, res, next) => {
-    res.setHeader('Cache-Control', 'no-store');
-    next();
-});
-
 app.listen(PORT, ()=>{
     console.log(`Server listening at port ${PORT}`)
 });
@@ -35,7 +27,7 @@ const genToken = (userdata: UserData): Token => {
         userid: userdata.id,
         username: userdata.username,
         password: userdata.password
-    },secretKey, {expiresIn: "1d"});
+    },secretKey, {expiresIn: "3s"});
 
     const token: Token = {
         userId: userdata.id,
@@ -45,7 +37,7 @@ const genToken = (userdata: UserData): Token => {
     return token;
 };
 
-const getAccounts = ()=>{
+export const getAccounts = ()=>{
     try {
         const data = fs.readFileSync('./data/accounts.json', 'utf-8');
         const parsedData= JSON.parse(data);
@@ -160,7 +152,7 @@ app.post('/account/login', (req: Request, res: Response) => {
             userId: token.userId,
             token: token.token,
             creationDate: Date.now().toString(),
-            expiresIn: "1d",
+            expiresIn: "3s",
             active: true
         };
         dataListOfTokens.push(newToken);

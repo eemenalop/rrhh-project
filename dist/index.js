@@ -3,24 +3,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAccounts = void 0;
 const express_1 = __importDefault(require("express"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const js_sha512_1 = require("js-sha512");
 const fs_1 = __importDefault(require("fs"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
-const app = (0, express_1.default)();
-const PORT = 4000;
-app.use(express_1.default.json());
-app.use(express_1.default.static(path_1.default.join(__dirname, '/public')));
-app.use('/dist', express_1.default.static('dist'));
-app.use(express_1.default.static(path_1.default.join(__dirname, '../public')));
-app.use((req, res, next) => {
-    res.setHeader('Cache-Control', 'no-store');
-    next();
-});
-app.listen(PORT, () => {
-    console.log(`Server listening at port ${PORT}`);
+const config_1 = require("./config");
+const config_2 = require("./config");
+config_2.app.use(express_1.default.json());
+config_2.app.use('/dist', express_1.default.static('dist'));
+config_2.app.use(express_1.default.static(path_1.default.join(__dirname, '../public')));
+config_2.app.listen(config_1.PORT, () => {
+    console.log(`Server listening at port ${config_1.PORT}`);
 });
 dotenv_1.default.config();
 const genToken = (userdata) => {
@@ -32,7 +28,7 @@ const genToken = (userdata) => {
         userid: userdata.id,
         username: userdata.username,
         password: userdata.password
-    }, secretKey, { expiresIn: "1d" });
+    }, secretKey, { expiresIn: "3s" });
     const token = {
         userId: userdata.id,
         token: tokenJWT
@@ -51,7 +47,8 @@ const getAccounts = () => {
         return [];
     }
 };
-const dataAccounts = getAccounts();
+exports.getAccounts = getAccounts;
+const dataAccounts = (0, exports.getAccounts)();
 const getTokens = () => {
     try {
         const data = fs_1.default.readFileSync('./data/listOfTokens.json', 'utf-8');
@@ -64,7 +61,7 @@ const getTokens = () => {
     }
 };
 const dataListOfTokens = getTokens();
-app.get('/', (req, res) => {
+config_2.app.get('/', (req, res) => {
     const token = req.headers['authorization'];
     if (!token) {
         return res.sendFile(path_1.default.join(__dirname, '..', 'public', 'login.html'));
@@ -77,7 +74,7 @@ app.get('/', (req, res) => {
     });
 });
 // Account login
-app.post('/account/login', (req, res) => {
+config_2.app.post('/account/login', (req, res) => {
     const username = String(req.body.username);
     const password = String(req.body.password);
     if (!username) {
@@ -143,7 +140,7 @@ app.post('/account/login', (req, res) => {
             userId: token.userId,
             token: token.token,
             creationDate: Date.now().toString(),
-            expiresIn: "1d",
+            expiresIn: "3s",
             active: true
         };
         dataListOfTokens.push(newToken);
