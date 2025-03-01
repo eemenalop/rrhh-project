@@ -5,10 +5,14 @@ import fs from 'fs';
 import { UserData, Token, Account, TokenResponse, TokenWithDetails } from './types';
 import dotenv from 'dotenv'
 import path from 'path';
-import { PORT } from './config';
-import { app } from './config';
+import accountRouter from './endpoints/account/accountRoutes';
+
+const app = express();
+const PORT = 4000;
 
 app.use(express.json());
+app.use('/account', accountRouter);
+
 app.use('/dist', express.static('dist'));
 app.use(express.static(path.join(__dirname, '../public')));
 app.listen(PORT, ()=>{
@@ -37,7 +41,7 @@ const genToken = (userdata: UserData): Token => {
     return token;
 };
 
-export const getAccounts = ()=>{
+export function getAccounts (){
     try {
         const data = fs.readFileSync('./data/accounts.json', 'utf-8');
         const parsedData= JSON.parse(data);

@@ -13,6 +13,7 @@ document.getElementById('login')?.addEventListener('submit', async function (eve
         });
         const data = await response.json();
         if (data.success) {
+            localStorage.setItem('token', data.token);
             window.location.href = '/home.html';
         }
         else {
