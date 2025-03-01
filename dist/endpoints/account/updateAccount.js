@@ -83,6 +83,12 @@ updateAccount.put('/update/:id', (req, res) => {
         active: true
     };
     fs_1.default.writeFileSync('./data/accounts.json', JSON.stringify(existingID, null, 2));
-    res.status(200).json({ success: true, message: `Account ID:${id} Username:${username}, have updated successfully` });
+    /*let updatedProps = []
+    for(const prop in existingID){
+        if(existingID[prop] !== dataAccounts.accounts[prop]){
+            updatedProps.push(prop);
+        }
+    }*/
+    res.status(200).json({ success: true, message: `Account ID:${id} Username:${username}, have updated successfully` /*, PropsUpdated: updatedProps*/ });
 });
 exports.default = updateAccount;

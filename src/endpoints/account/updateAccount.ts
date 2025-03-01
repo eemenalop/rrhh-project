@@ -35,7 +35,7 @@ updateAccount.put('/update/:id', (req: Request, res: Response)=>{
     }
 
     if(!personal_id || !name || !lastname || !username || !password || !position){
-        res.status(400).json({ success: false, message: 'You must complete all options' })
+        res.status(400).json({ success: false, message: 'You must complete all options'})
         return;
     }
 
@@ -54,7 +54,14 @@ updateAccount.put('/update/:id', (req: Request, res: Response)=>{
     }
     fs.writeFileSync('./data/accounts.json', JSON.stringify(existingID, null,2));
 
-    res.status(200).json({success: true, message: `Account ID:${id} Username:${username}, have updated successfully`})
+    /*let updatedProps = []
+    for(const prop in existingID){
+        if(existingID[prop] !== dataAccounts.accounts[prop]){
+            updatedProps.push(prop);
+        }
+    }*/
+
+    res.status(200).json({success: true, message: `Account ID:${id} Username:${username}, have updated successfully`/*, PropsUpdated: updatedProps*/})
 
 });
 

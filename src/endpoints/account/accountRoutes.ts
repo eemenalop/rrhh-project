@@ -9,6 +9,6 @@ const accountRouter = Router();
 accountRouter.post('/create', createAccount);
 accountRouter.get('/all', getAllAccounts);
 accountRouter.get('/:id', getAccountByID);
-accountRouter.get('/update/:id', updateAccount);
+accountRouter.put('/update/:id', updateAccount);
 
 export default accountRouter;

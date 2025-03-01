@@ -12,5 +12,5 @@ const accountRouter = (0, express_1.Router)();
 accountRouter.post('/create', createAccount_1.default);
 accountRouter.get('/all', getAllAccounts_1.default);
 accountRouter.get('/:id', getAccountById_1.default);
-accountRouter.get('/update/:id', updateAccount_1.default);
+accountRouter.put('/update/:id', updateAccount_1.default);
 exports.default = accountRouter;
