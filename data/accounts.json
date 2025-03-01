@@ -7,7 +7,7 @@
       "lastname": "Mena",
       "username": "emena",
       "password": "testpassword",
-      "role": "",
+      "position": "Analyst",
       "active": true
     },
     {
@@ -17,71 +17,11 @@
       "lastname": "Lopez",
       "username": "jlopez",
       "password": "testpassword",
-      "role": "",
+      "possition": "",
       "active": true
     },
     {
       "id": 3,
-      "personal_id": "40224175483",
-      "name": "Pedro",
-      "lastname": "Martinez",
-      "username": "pmartinez",
-      "password": "test",
-      "position": "Analyst",
-      "active": true
-    },
-    {
-      "id": 5,
-      "personal_id": "40225365857",
-      "name": "Andres",
-      "lastname": "Jimenez",
-      "username": "ajimenez",
-      "password": "testpassword",
-      "position": "Manager",
-      "active": true
-    },
-    {
-      "id": 6,
-      "personal_id": "40225369557",
-      "name": "Carolin",
-      "lastname": "Santos",
-      "username": "csantos",
-      "password": "testpassword",
-      "position": "Manager",
-      "active": true
-    },
-    {
-      "id": 6,
-      "personal_id": "402255292132157457",
-      "name": "Carolin",
-      "lastname": "Santos",
-      "username": "csssantos",
-      "password": "testasadapa",
-      "position": "Manager",
-      "active": true
-    },
-    {
-      "id": 7,
-      "personal_id": "40225863241",
-      "name": "Josesito",
-      "lastname": "Cabrera",
-      "username": "jcabrera",
-      "password": "testpassword",
-      "position": "Admin",
-      "active": true
-    },
-    {
-      "id": 8,
-      "personal_id": "00125863525",
-      "name": "Randy",
-      "lastname": "Johnson",
-      "username": "rjohnson",
-      "password": "testpassword",
-      "position": "Admin",
-      "active": true
-    },
-    {
-      "id": 9,
       "personal_id": "0012581263525",
       "name": "Randy",
       "lastname": "Johnson",

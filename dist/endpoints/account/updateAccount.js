@@ -74,6 +74,7 @@ updateAccount.put('/update/:id', (req, res) => {
         return;
     }
     existingID = {
+        id,
         personal_id,
         name,
         lastname,
@@ -82,13 +83,15 @@ updateAccount.put('/update/:id', (req, res) => {
         position,
         active: true
     };
-    fs_1.default.writeFileSync('./data/accounts.json', JSON.stringify(existingID, null, 2));
-    /*let updatedProps = []
-    for(const prop in existingID){
-        if(existingID[prop] !== dataAccounts.accounts[prop]){
-            updatedProps.push(prop);
+    const index = dataAccounts.accounts.findIndex((acc) => acc.id === existingID.id);
+    let updatedProps = [];
+    for (const prop in existingID) {
+        if (prop !== dataAccounts.accounts[index].prop) {
+            updatedProps.push(`${prop}: ${existingID[prop]}`);
         }
-    }*/
-    res.status(200).json({ success: true, message: `Account ID:${id} Username:${username}, have updated successfully` /*, PropsUpdated: updatedProps*/ });
+    }
+    res.status(200).json({ success: true, message: `Account ID:${id} Username:${username}, have updated successfully`, updatedProps: updatedProps, ex: dataAccounts.accounts[index] });
+    dataAccounts.accounts[index] = existingID;
+    fs_1.default.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null, 2));
 });
 exports.default = updateAccount;

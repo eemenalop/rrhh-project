@@ -43,7 +43,9 @@ updateAccount.put('/update/:id', (req: Request, res: Response)=>{
         res.status(404).json({success: false, message: `Account with number ID ${id} not found`});
         return;
     }
+
     existingID = {
+        id,
         personal_id,
         name,
         lastname,
@@ -52,17 +54,20 @@ updateAccount.put('/update/:id', (req: Request, res: Response)=>{
         position,
         active: true
     }
-    fs.writeFileSync('./data/accounts.json', JSON.stringify(existingID, null,2));
 
-    /*let updatedProps = []
+    const index = dataAccounts.accounts.findIndex((acc: { id: any; }) => acc.id === existingID.id);
+    let updatedProps = [];
     for(const prop in existingID){
-        if(existingID[prop] !== dataAccounts.accounts[prop]){
-            updatedProps.push(prop);
+        if(prop === dataAccounts.accounts[index].prop){
+            updatedProps.push(`${prop}: ${existingID[prop]}`);
         }
-    }*/
-
-    res.status(200).json({success: true, message: `Account ID:${id} Username:${username}, have updated successfully`/*, PropsUpdated: updatedProps*/})
-
+    }
+    
+    
+    
+    res.status(200).json({success: true, message: `Account ID:${id} Username:${username}, have updated successfully`, updatedProps: updatedProps, ex: dataAccounts.accounts[index]})
+    dataAccounts.accounts[index] = existingID;
+    fs.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null,2));
 });
 
 export default updateAccount;
