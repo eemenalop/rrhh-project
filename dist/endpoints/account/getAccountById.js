@@ -38,7 +38,6 @@ const index_1 = require("../../index");
 const getAccountByID = (0, express_1.Router)();
 getAccountByID.use(express_1.default.json());
 getAccountByID.get('/:id', (req, res) => {
-    const dataAccounts = (0, index_1.getAccounts)();
     const id = parseInt(req.params.id);
     if (!id) {
         res.status(400).json({ success: false, message: `Number ID account is required` });
@@ -48,6 +47,7 @@ getAccountByID.get('/:id', (req, res) => {
         res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
         return;
     }
+    const dataAccounts = (0, index_1.getAccounts)();
     const account = dataAccounts.find((a) => a.id === id);
     if (!account) {
         res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });

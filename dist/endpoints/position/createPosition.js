@@ -38,48 +38,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const fs_1 = __importDefault(require("fs"));
-const index_1 = require("../../index");
-const updateAccount = (0, express_1.Router)();
-updateAccount.use(express_1.default.json());
-updateAccount.put('/:id/update', (req, res) => {
+const getAllPosition_1 = require("./getAllPosition");
+const createPosition = (0, express_1.Router)();
+createPosition.use(express_1.default.json());
+createPosition.post('/create', (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const { personal_id, name, lastname, username, password, position } = req.body;
-        const dataAccounts = (0, index_1.getAccounts)();
-        let existingID = dataAccounts.find((e) => e.id === id);
-        if (!id) {
-            res.status(400).json({ success: false, message: `Number ID account is required` });
-            return;
-        }
-        if (isNaN(id) || id <= 0) {
-            res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
-            return;
-        }
-        if (!personal_id || !name || !lastname || !username || !password || !position) {
+        const { name, salary } = req.body;
+        if (!name || !salary) {
             res.status(400).json({ success: false, message: 'You must complete all options' });
             return;
         }
-        if (!existingID) {
-            res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
+        const dataPosition = (0, getAllPosition_1.getPosition)();
+        const positionName = dataPosition.find((p) => p.name === name);
+        if (positionName) {
+            res.status(400).json({ success: false, message: `This position name:${name} is already created` });
             return;
         }
-        existingID = {
-            id,
-            personal_id,
+        const positionID = dataPosition.length + 1;
+        const newPosition = {
+            id: positionID,
             name,
-            lastname,
-            username,
-            password,
-            position,
-            active: true
+            salary,
+            active: true,
+            isByPass: false
         };
-        const index = dataAccounts.findIndex((acc) => acc.id === existingID.id);
-        dataAccounts[index] = existingID;
-        fs_1.default.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null, 2));
-        res.status(200).json({ success: true, message: `Account ID:${id} Username:${username}, have updated successfully` });
+        dataPosition.push(newPosition);
+        fs_1.default.writeFileSync('./data/position.json', JSON.stringify(dataPosition, null, 2));
+        res.status(200).json({ success: true, message: `Position with name: ${name} have been created sucessfully! ID:${positionID}` });
     }
     catch (error) {
-        res.status(500).json({ success: false, message: 'Internal error server', error });
+        res.status(500).json({ success: false, message: 'Internal server Error', error });
     }
 });
-exports.default = updateAccount;
+exports.default = createPosition;

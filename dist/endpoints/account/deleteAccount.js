@@ -43,7 +43,6 @@ const deleteAccount = (0, express_1.Router)();
 deleteAccount.use(express_1.default.json());
 deleteAccount.patch('/:id/delete', (req, res) => {
     try {
-        const dataAccounts = (0, index_1.getAccounts)();
         const id = parseInt(req.params.id);
         if (!id) {
             res.status(400).json({ success: false, message: `Number ID account is required` });
@@ -53,6 +52,7 @@ deleteAccount.patch('/:id/delete', (req, res) => {
             res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
             return;
         }
+        const dataAccounts = (0, index_1.getAccounts)();
         let existingID = dataAccounts.find((e) => e.id === id);
         if (!existingID) {
             res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });

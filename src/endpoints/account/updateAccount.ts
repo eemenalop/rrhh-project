@@ -11,26 +11,23 @@ updateAccount.put('/:id/update', (req: Request, res: Response)=>{
         
         const id = parseInt(req.params.id);
         const { personal_id, name, lastname, username, password, position }: Account = req.body;
-        const dataAccounts = getAccounts();
+        if(!id){
+            res.status(400).json({success: false, message: `Number ID account is required`});
+            return;
+        }
         
-    let existingID = dataAccounts.find((e: Account)=>e.id === id);
-
-    if(!id){
-        res.status(400).json({success: false, message: `Number ID account is required`});
-        return;
-    }
-
-    if(isNaN(id) || id <= 0){
-        res.status(400).json({success: false, message: `Enter a  valid number ID Account`});
-        return;
-    }
-
-    if(!personal_id || !name || !lastname || !username || !password || !position){
-        res.status(400).json({ success: false, message: 'You must complete all options'})
-        return;
-    }
-
-    if(!existingID){
+        if(isNaN(id) || id <= 0){
+            res.status(400).json({success: false, message: `Enter a  valid number ID Account`});
+            return;
+        }
+        
+        if(!personal_id || !name || !lastname || !username || !password || !position){
+            res.status(400).json({ success: false, message: 'You must complete all options'})
+            return;
+        }
+        const dataAccounts = getAccounts();
+        let existingID = dataAccounts.find((e: Account)=>e.id === id);
+        if(!existingID){
         res.status(404).json({success: false, message: `Account with number ID ${id} not found`});
         return;
     }
