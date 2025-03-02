@@ -42,11 +42,9 @@ const index_1 = require("../../index");
 const deleteAccount = (0, express_1.Router)();
 deleteAccount.use(express_1.default.json());
 deleteAccount.patch('/:id/delete', (req, res) => {
-    const dataAccounts = (0, index_1.getAccounts)();
     try {
+        const dataAccounts = (0, index_1.getAccounts)();
         const id = parseInt(req.params.id);
-        let existingID = dataAccounts.find((e) => e.id === id);
-        console.log(existingID);
         if (!id) {
             res.status(400).json({ success: false, message: `Number ID account is required` });
             return;
@@ -55,11 +53,12 @@ deleteAccount.patch('/:id/delete', (req, res) => {
             res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
             return;
         }
+        let existingID = dataAccounts.find((e) => e.id === id);
         if (!existingID) {
             res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
             return;
         }
-        //existingID.active = false;
+        existingID.active = false;
         const index = dataAccounts.findIndex((acc) => acc.id === existingID.id);
         dataAccounts[index] = existingID;
         fs_1.default.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null, 2));

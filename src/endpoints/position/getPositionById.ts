@@ -5,7 +5,6 @@ import { getPosition } from './getAllPosition';
 const getPositionByID = Router();
 
 getPositionByID.get('/:id', (req: Request, res: Response)=>{
-    const dataPosition = getPosition();
     try {
         const id = parseInt(req.params.id);
         if(!id){
@@ -17,6 +16,7 @@ getPositionByID.get('/:id', (req: Request, res: Response)=>{
             res.status(400).json({success: false, message: `Enter a  valid number ID position`});
             return;
         }
+        const dataPosition = getPosition();
         const position = dataPosition.find((p)=> p.id === id);
         if(!position){
             res.status(404).json({success: false, message: `Account with number ID ${id} not found`})

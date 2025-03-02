@@ -7,12 +7,12 @@ const updateAccount = Router();
 updateAccount.use(express.json());
 
 updateAccount.put('/:id/update', (req: Request, res: Response)=>{
-    const dataAccounts = getAccounts();
     try {
-
-    const id = parseInt(req.params.id);
-    const { personal_id, name, lastname, username, password, position }: Account = req.body;
-
+        
+        const id = parseInt(req.params.id);
+        const { personal_id, name, lastname, username, password, position }: Account = req.body;
+        const dataAccounts = getAccounts();
+        
     let existingID = dataAccounts.find((e: Account)=>e.id === id);
 
     if(!id){

@@ -16,6 +16,7 @@ app.use('/account', accountRouter);
 app.use('/position', positionsRouter);
 
 app.use('/dist', express.static('dist'));
+app.use(express.static("public"));
 app.use(express.static(path.join(__dirname, '../public')));
 app.listen(PORT, ()=>{
     console.log(`Server listening at port ${PORT}`)

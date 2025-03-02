@@ -5,7 +5,7 @@ document.getElementById('login')?.addEventListener('submit', async function(even
     const password = (document.getElementById('password') as HTMLInputElement).value;
 
     try {
-        const response = await fetch('http://localhost:4000/account/login?nocache=${Date.now()}', {
+        const response = await fetch('http://localhost:4000/account/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

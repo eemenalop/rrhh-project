@@ -16,17 +16,16 @@ const getAccounts = ()=>{
         return []
     }
 }
-const dataAccounts = getAccounts();
-
 // Create Account
 createAccount.post('/create', (req: Request, res: Response) => {
-    const { personal_id, name, lastname, username, password, position }: Account = req.body;
+    try {
+        const { personal_id, name, lastname, username, password, position }: Account = req.body;
     
     if (!personal_id || !name || !lastname || !username || !password || !position) {
         res.status(400).json({ success: false, message: 'You must complete all options' })
         return;
     }
-
+    const dataAccounts = getAccounts();
     const existingPersonal_id = dataAccounts.accounts.find((ID: Account) =>ID.personal_id === personal_id)
     if (existingPersonal_id) {
         res.status(400).json({ success: false, message: `This ${personal_id} is already in use` })
@@ -60,7 +59,11 @@ createAccount.post('/create', (req: Request, res: Response) => {
     dataAccounts.accounts.push(newAccount);
     fs.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null, 2));
 
-    res.status(200).json({success: true, message: `Account with Username: ${username} have created sucessfully!`})
+    res.status(200).json({success: true, message: `Account with Username: ${username} have been created sucessfully!`})
+    } catch (error) {
+        res.status(500).json({success: false, message: 'Internal server Error', error})
+    }
+    
 
 });
 
