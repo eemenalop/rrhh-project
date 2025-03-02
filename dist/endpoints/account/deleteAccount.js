@@ -32,26 +32,41 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
+const fs_1 = __importDefault(require("fs"));
 const index_1 = require("../../index");
-const getAccountByID = (0, express_1.Router)();
-getAccountByID.use(express_1.default.json());
-getAccountByID.get('/:id', (req, res) => {
+const deleteAccount = (0, express_1.Router)();
+deleteAccount.use(express_1.default.json());
+deleteAccount.patch('/:id/delete', (req, res) => {
     const dataAccounts = (0, index_1.getAccounts)();
-    const id = parseInt(req.params.id);
-    if (!id) {
-        res.status(400).json({ success: false, message: `Number ID account is required` });
-        return;
+    try {
+        const id = parseInt(req.params.id);
+        let existingID = dataAccounts.find((e) => e.id === id);
+        console.log(existingID);
+        if (!id) {
+            res.status(400).json({ success: false, message: `Number ID account is required` });
+            return;
+        }
+        if (isNaN(id) || id <= 0) {
+            res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
+            return;
+        }
+        if (!existingID) {
+            res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
+            return;
+        }
+        //existingID.active = false;
+        const index = dataAccounts.findIndex((acc) => acc.id === existingID.id);
+        dataAccounts[index] = existingID;
+        fs_1.default.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null, 2));
+        res.status(200).json({ success: true, message: `Account ID:${id}, have been deleted successfully` });
     }
-    if (isNaN(id) || id <= 0) {
-        res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
-        return;
+    catch (error) {
+        res.status(500).json({ success: false, message: 'Internal server Error', error });
     }
-    const account = dataAccounts.find((a) => a.id === id);
-    if (!account) {
-        res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
-    }
-    res.status(200).json(account);
 });
-exports.default = getAccountByID;
+exports.default = deleteAccount;

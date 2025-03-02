@@ -1,11 +1,9 @@
-{
-    "employees": [
-        {
-            "id": 1,
-            "personal_id": "40224175485",
-            "fullName": "Edgar Mena",
-            "role": "",
-            "active": true
-        }
-    ]
-}
+[
+    {
+        "id": 1,
+        "personal_id": "40224175485",
+        "fullName": "Edgar Mena",
+        "role": "",
+        "active": true
+    }
+]

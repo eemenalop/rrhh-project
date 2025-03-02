@@ -1,24 +1,12 @@
 import express,{Request, Response, Router} from 'express';
-import fs from 'fs'
 import { Account } from '../../types';
+import { getAccounts } from '../../index';
 
 const getAccountByID = Router();
 getAccountByID.use(express.json());
 
-const getAccounts = ()=>{
-    try {
-        const data = fs.readFileSync('./data/accounts.json', 'utf-8');
-        const parsedData= JSON.parse(data);
-        const account = parsedData;
-        return account;
-    } catch (error) {
-        console.log('Error reading file JSON:', error);
-        return []
-    }
-}
-const dataAccounts = getAccounts();
-
 getAccountByID.get('/:id', (req: Request, res: Response)=>{
+    const dataAccounts = getAccounts();
     const id = parseInt(req.params.id);
 
     if(!id){
@@ -31,7 +19,7 @@ getAccountByID.get('/:id', (req: Request, res: Response)=>{
         return;
     }
 
-    const account = dataAccounts.accounts.find((a: Account)=> a.id === id);
+    const account = dataAccounts.find((a)=> a.id === id);
     if(!account){
         res.status(404).json({success: false, message: `Account with number ID ${id} not found`})
     }

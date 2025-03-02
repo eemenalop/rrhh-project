@@ -38,60 +38,48 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const fs_1 = __importDefault(require("fs"));
+const index_1 = require("../../index");
 const updateAccount = (0, express_1.Router)();
 updateAccount.use(express_1.default.json());
-const getAccounts = () => {
+updateAccount.put('/:id/update', (req, res) => {
+    const dataAccounts = (0, index_1.getAccounts)();
     try {
-        const data = fs_1.default.readFileSync('./data/accounts.json', 'utf-8');
-        const parsedData = JSON.parse(data);
-        const account = parsedData;
-        return account;
+        const id = parseInt(req.params.id);
+        const { personal_id, name, lastname, username, password, position } = req.body;
+        let existingID = dataAccounts.find((e) => e.id === id);
+        if (!id) {
+            res.status(400).json({ success: false, message: `Number ID account is required` });
+            return;
+        }
+        if (isNaN(id) || id <= 0) {
+            res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
+            return;
+        }
+        if (!personal_id || !name || !lastname || !username || !password || !position) {
+            res.status(400).json({ success: false, message: 'You must complete all options' });
+            return;
+        }
+        if (!existingID) {
+            res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
+            return;
+        }
+        existingID = {
+            id,
+            personal_id,
+            name,
+            lastname,
+            username,
+            password,
+            position,
+            active: true
+        };
+        const index = dataAccounts.findIndex((acc) => acc.id === existingID.id);
+        dataAccounts[index] = existingID;
+        fs_1.default.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null, 2));
+        res.status(200).json({ success: true, message: `Account ID:${id} Username:${username}, have updated successfully` });
     }
     catch (error) {
-        console.log('Error reading file JSON:', error);
-        return [];
+        res.status(500).json({ success: false, message: 'Internal error server', error });
     }
-};
-const dataAccounts = getAccounts();
-updateAccount.put('/update/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const { personal_id, name, lastname, username, password, position } = req.body;
-    let existingID = dataAccounts.accounts.find((e) => e.id === id);
-    if (!id) {
-        res.status(400).json({ success: false, message: `Number ID account is required` });
-        return;
-    }
-    if (isNaN(id) || id <= 0) {
-        res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
-        return;
-    }
-    if (!personal_id || !name || !lastname || !username || !password || !position) {
-        res.status(400).json({ success: false, message: 'You must complete all options' });
-        return;
-    }
-    if (!existingID) {
-        res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
-        return;
-    }
-    existingID = {
-        id,
-        personal_id,
-        name,
-        lastname,
-        username,
-        password,
-        position,
-        active: true
-    };
-    const index = dataAccounts.accounts.findIndex((acc) => acc.id === existingID.id);
-    let updatedProps = [];
-    for (const prop in existingID) {
-        if (prop !== dataAccounts.accounts[index].prop) {
-            updatedProps.push(`${prop}: ${existingID[prop]}`);
-        }
-    }
-    res.status(200).json({ success: true, message: `Account ID:${id} Username:${username}, have updated successfully`, updatedProps: updatedProps, ex: dataAccounts.accounts[index] });
-    dataAccounts.accounts[index] = existingID;
-    fs_1.default.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null, 2));
 });
 exports.default = updateAccount;

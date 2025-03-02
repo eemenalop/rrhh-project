@@ -1,28 +1,19 @@
 import express, {Request, Response, Router} from 'express'
 import fs from 'fs';
 import { Account } from '../../types';
+import { getAccounts } from '../../index';
 
 const updateAccount = Router();
 updateAccount.use(express.json());
 
-const getAccounts = ()=>{
+updateAccount.put('/:id/update', (req: Request, res: Response)=>{
+    const dataAccounts = getAccounts();
     try {
-        const data = fs.readFileSync('./data/accounts.json', 'utf-8');
-        const parsedData= JSON.parse(data);
-        const account = parsedData;
-        return account;
-    } catch (error) {
-        console.log('Error reading file JSON:', error);
-        return []
-    }
-}
-const dataAccounts = getAccounts();
 
-updateAccount.put('/update/:id', (req: Request, res: Response)=>{
     const id = parseInt(req.params.id);
     const { personal_id, name, lastname, username, password, position }: Account = req.body;
 
-    let existingID = dataAccounts.accounts.find((e: Account)=>e.id === id);
+    let existingID = dataAccounts.find((e: Account)=>e.id === id);
 
     if(!id){
         res.status(400).json({success: false, message: `Number ID account is required`});
@@ -55,19 +46,14 @@ updateAccount.put('/update/:id', (req: Request, res: Response)=>{
         active: true
     }
 
-    const index = dataAccounts.accounts.findIndex((acc: { id: any; }) => acc.id === existingID.id);
-    let updatedProps = [];
-    for(const prop in existingID){
-        if(prop === dataAccounts.accounts[index].prop){
-            updatedProps.push(`${prop}: ${existingID[prop]}`);
-        }
-    }
-    
-    
-    
-    res.status(200).json({success: true, message: `Account ID:${id} Username:${username}, have updated successfully`, updatedProps: updatedProps, ex: dataAccounts.accounts[index]})
-    dataAccounts.accounts[index] = existingID;
+    const index = dataAccounts.findIndex((acc: { id: any; }) => acc.id === existingID.id);
+    dataAccounts[index] = existingID;
     fs.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null,2));
+    res.status(200).json({success: true, message: `Account ID:${id} Username:${username}, have updated successfully`});
+
+    } catch (error) {
+        res.status(500).json({success: false, message: 'Internal error server', error})
+    }
 });
 
 export default updateAccount;

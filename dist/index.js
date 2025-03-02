@@ -11,10 +11,12 @@ const fs_1 = __importDefault(require("fs"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 const accountRoutes_1 = __importDefault(require("./endpoints/account/accountRoutes"));
+const positionRoutes_1 = __importDefault(require("./endpoints/position/positionRoutes"));
 const app = (0, express_1.default)();
 const PORT = 4000;
 app.use(express_1.default.json());
 app.use('/account', accountRoutes_1.default);
+app.use('/position', positionRoutes_1.default);
 app.use('/dist', express_1.default.static('dist'));
 app.use(express_1.default.static(path_1.default.join(__dirname, '../public')));
 app.listen(PORT, () => {
@@ -85,7 +87,7 @@ app.post('/account/login', (req, res) => {
         });
         return;
     }
-    const user = dataAccounts.accounts.find((u) => u.username === username);
+    const user = dataAccounts.find((u) => u.username === username);
     if (!user) {
         res.status(404).json({
             sucess: false,

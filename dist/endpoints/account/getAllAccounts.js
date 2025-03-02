@@ -32,28 +32,13 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
-const fs_1 = __importDefault(require("fs"));
+const index_1 = require("../../index");
 const getAllAccounts = (0, express_1.Router)();
 getAllAccounts.use(express_1.default.json());
-const getAccounts = () => {
-    try {
-        const data = fs_1.default.readFileSync('./data/accounts.json', 'utf-8');
-        const parsedData = JSON.parse(data);
-        const account = parsedData;
-        return account;
-    }
-    catch (error) {
-        console.log('Error reading file JSON:', error);
-        return [];
-    }
-};
-const dataAccounts = getAccounts();
 getAllAccounts.get('/all', (req, res) => {
+    const dataAccounts = (0, index_1.getAccounts)();
     res.status(200).json(dataAccounts);
 });
 exports.default = getAllAccounts;

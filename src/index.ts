@@ -6,12 +6,14 @@ import { UserData, Token, Account, TokenResponse, TokenWithDetails } from './typ
 import dotenv from 'dotenv'
 import path from 'path';
 import accountRouter from './endpoints/account/accountRoutes';
+import positionsRouter from './endpoints/position/positionRoutes';
 
 const app = express();
 const PORT = 4000;
 
 app.use(express.json());
 app.use('/account', accountRouter);
+app.use('/position', positionsRouter);
 
 app.use('/dist', express.static('dist'));
 app.use(express.static(path.join(__dirname, '../public')));
@@ -44,8 +46,8 @@ const genToken = (userdata: UserData): Token => {
 export function getAccounts (){
     try {
         const data = fs.readFileSync('./data/accounts.json', 'utf-8');
-        const parsedData= JSON.parse(data);
-        const account = parsedData;
+        const parsedData = JSON.parse(data);
+        const account: Account[] = parsedData;
         return account;
     } catch (error) {
         console.log('Error reading file JSON:', error);
@@ -95,7 +97,7 @@ app.post('/account/login', (req: Request, res: Response) => {
         return;
     }
 
-    const user = dataAccounts.accounts.find((u: Account) => u.username === username);
+    const user = dataAccounts.find((u: Account) => u.username === username);
     if(!user){
         res.status(404).json({
             sucess: false,

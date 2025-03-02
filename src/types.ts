@@ -6,7 +6,7 @@ export interface Account{
     username: string,
     password: string,
     position: string,
-    active: true
+    active: boolean
 }
 
 export interface Position {
