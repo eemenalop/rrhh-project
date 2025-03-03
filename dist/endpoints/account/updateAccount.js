@@ -38,15 +38,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const fs_1 = __importDefault(require("fs"));
-const index_1 = require("../../index");
+const getData_1 = require("../../getData");
 const updateAccount = (0, express_1.Router)();
 updateAccount.use(express_1.default.json());
 updateAccount.put('/:id/update', (req, res) => {
     try {
         const id = parseInt(req.params.id);
         const { personal_id, name, lastname, username, password, position } = req.body;
-        const dataAccounts = (0, index_1.getAccounts)();
-        let existingID = dataAccounts.find((e) => e.id === id);
         if (!id) {
             res.status(400).json({ success: false, message: `Number ID account is required` });
             return;
@@ -59,6 +57,12 @@ updateAccount.put('/:id/update', (req, res) => {
             res.status(400).json({ success: false, message: 'You must complete all options' });
             return;
         }
+        const dataAccounts = (0, getData_1.getDatafromJSON)('accounts.json');
+        if (!dataAccounts) {
+            res.status(500).json({ success: false, message: 'Error reading accounts data' });
+            return;
+        }
+        let existingID = dataAccounts.find((e) => e.id === id);
         if (!existingID) {
             res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
             return;
@@ -80,6 +84,7 @@ updateAccount.put('/:id/update', (req, res) => {
     }
     catch (error) {
         res.status(500).json({ success: false, message: 'Internal error server', error });
+        return;
     }
 });
 exports.default = updateAccount;

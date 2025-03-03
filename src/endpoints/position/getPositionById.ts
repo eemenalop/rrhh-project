@@ -1,6 +1,7 @@
 
 import {Request, Response, Router} from 'express'
-import { getPosition } from './getAllPosition';
+import { getDatafromJSON } from '../../getData';
+import { Position } from 'types';
 
 const getPositionByID = Router();
 
@@ -16,7 +17,12 @@ getPositionByID.get('/:id', (req: Request, res: Response)=>{
             res.status(400).json({success: false, message: `Enter a  valid number ID position`});
             return;
         }
-        const dataPosition = getPosition();
+            const dataPosition = getDatafromJSON<Position[]>('accounts.json');
+                        
+        if (!dataPosition) {
+        res.status(500).json({ success: false, message: 'Error reading Position data' });
+        return;
+        }
         const position = dataPosition.find((p)=> p.id === id);
         if(!position){
             res.status(404).json({success: false, message: `Account with number ID ${id} not found`})
@@ -24,7 +30,8 @@ getPositionByID.get('/:id', (req: Request, res: Response)=>{
         }
             res.status(200).json(position);
     } catch (error) {
-        res.status(500).json({success: false, message: 'Internal server error', error})
+        res.status(500).json({ success: false, message: 'Internal server error', error });
+        return;
     }
 });
 

@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "Director",
-    "salary": 200000,
+    "salary": 250000,
     "active": true,
     "isByPass": true
   },
@@ -38,7 +38,7 @@
     "id": 6,
     "name": "Conserje",
     "salary": 30000,
-    "active": true,
+    "active": false,
     "isByPass": false
   }
 ]

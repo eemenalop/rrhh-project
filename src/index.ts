@@ -2,11 +2,13 @@ import express, {Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import {sha512} from 'js-sha512';
 import fs from 'fs';
-import { UserData, Token, Account, TokenResponse, TokenWithDetails } from './types';
+import { Token, Account, TokenResponse, TokenWithDetails } from './types';
 import dotenv from 'dotenv'
 import path from 'path';
 import accountRouter from './endpoints/account/accountRoutes';
 import positionsRouter from './endpoints/position/positionRoutes';
+import employeeRouter from './endpoints/employee/employeeRouter';
+import { genToken, getDatafromJSON, getTokens } from './getData';
 
 const app = express();
 const PORT = 4000;
@@ -14,6 +16,7 @@ const PORT = 4000;
 app.use(express.json());
 app.use('/account', accountRouter);
 app.use('/position', positionsRouter);
+app.use('/position', employeeRouter);
 
 app.use('/dist', express.static('dist'));
 app.use(express.static("public"));
@@ -23,51 +26,6 @@ app.listen(PORT, ()=>{
 });
 
 dotenv.config();
-
-const genToken = (userdata: UserData): Token => {
-    const secretKey = process.env.SECRET_KEY;
-    
-    if (!secretKey) {
-        throw new Error("SECRET_KEY is not defined");
-    }
-    const tokenJWT: string = jwt.sign({
-        userid: userdata.id,
-        username: userdata.username,
-        password: userdata.password
-    },secretKey, {expiresIn: "3s"});
-
-    const token: Token = {
-        userId: userdata.id,
-        token: tokenJWT
-    };
-
-    return token;
-};
-
-export function getAccounts (){
-    try {
-        const data = fs.readFileSync('./data/accounts.json', 'utf-8');
-        const parsedData = JSON.parse(data);
-        const account: Account[] = parsedData;
-        return account;
-    } catch (error) {
-        console.log('Error reading file JSON:', error);
-        return []
-    }
-}
-const dataAccounts = getAccounts();
-
-const getTokens = () =>{
-    try {
-        const data = fs.readFileSync('./data/listOfTokens.json', 'utf-8');
-        const tokenData: TokenResponse = JSON.parse(data);
-        return tokenData.listOfTokens;
-    } catch (error) {
-        console.log('Error reading file JSON:', error);
-        return []
-    }
-}
-const dataListOfTokens = getTokens();
 
 app.get('/', (req: Request, res: Response) => {
     const token = req.headers['authorization'];
@@ -97,8 +55,8 @@ app.post('/account/login', (req: Request, res: Response) => {
         });
         return;
     }
-
-    const user = dataAccounts.find((u: Account) => u.username === username);
+    const dataAccounts = getDatafromJSON<Account[]>('accounts.json');
+    const user = dataAccounts?.find((u) => u.username === username);
     if(!user){
         res.status(404).json({
             sucess: false,
@@ -151,7 +109,7 @@ app.post('/account/login', (req: Request, res: Response) => {
     }
 
     getCookie();*/
-
+    const dataListOfTokens = getTokens();
     const saveToken = (token: Token) => {
 
         const newToken: TokenWithDetails = {

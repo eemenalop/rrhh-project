@@ -1,6 +1,6 @@
 import express, {Request, Response, Router} from 'express';
 import fs from 'fs';
-import { getPosition } from './getAllPosition';
+import { getDatafromJSON } from '../../getData';
 import { Position } from 'types';
 
 const createPosition = Router();
@@ -13,7 +13,12 @@ createPosition.post('/create', (req: Request, res: Response)=>{
             res.status(400).json({ success: false, message: 'You must complete all options'})
             return;
         }
-        const dataPosition = getPosition();
+            const dataPosition = getDatafromJSON<Position[]>('accounts.json');
+                
+        if (!dataPosition) {
+            res.status(500).json({ success: false, message: 'Error reading Position data' });
+            return;
+        }
         const positionName = dataPosition.find((p)=>p.name === name);
         if(positionName){
             res.status(400).json({ success: false, message: `This position name:${name} is already created` })
@@ -31,7 +36,8 @@ createPosition.post('/create', (req: Request, res: Response)=>{
         fs.writeFileSync('./data/position.json', JSON.stringify(dataPosition, null, 2))
         res.status(200).json({success: true, message: `Position with name: ${name} have been created sucessfully! ID:${positionID}`})
     } catch (error) {
-        res.status(500).json({success: false, message: 'Internal server Error', error})
+        res.status(500).json({ success: false, message: 'Internal server Error', error });
+        return;
     }
     
 });

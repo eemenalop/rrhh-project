@@ -34,11 +34,21 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
-const index_1 = require("../../index");
+const getData_1 = require("../../getData");
 const getAllAccounts = (0, express_1.Router)();
 getAllAccounts.use(express_1.default.json());
 getAllAccounts.get('/all', (req, res) => {
-    const dataAccounts = (0, index_1.getAccounts)();
-    res.status(200).json(dataAccounts);
+    try {
+        const dataAccounts = (0, getData_1.getDatafromJSON)('accounts.json');
+        if (!dataAccounts) {
+            res.status(500).json({ success: false, message: 'Error reading accounts data' });
+            return;
+        }
+        res.status(200).json(dataAccounts);
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: 'Internal server Error', error });
+        return;
+    }
 });
 exports.default = getAllAccounts;

@@ -37,13 +37,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
-const fs_1 = __importDefault(require("fs"));
 const getData_1 = require("../../getData");
-const createPosition = (0, express_1.Router)();
-createPosition.use(express_1.default.json());
-createPosition.post('/create', (req, res) => {
+const fs_1 = __importDefault(require("fs"));
+const updatePosition = (0, express_1.Router)();
+updatePosition.use(express_1.default.json());
+updatePosition.put('/:id/update', (req, res) => {
     try {
-        const { name, salary } = req.body;
+        const id = parseInt(req.params.id);
+        const { name, salary, isByPass } = req.body;
+        if (!id) {
+            res.status(400).json({ success: false, message: `Number ID position is required` });
+            return;
+        }
+        if (isNaN(id) || id <= 0) {
+            res.status(400).json({ success: false, message: `Enter a valid number ID position` });
+            return;
+        }
         if (!name || !salary) {
             res.status(400).json({ success: false, message: 'You must complete all options' });
             return;
@@ -53,26 +62,26 @@ createPosition.post('/create', (req, res) => {
             res.status(500).json({ success: false, message: 'Error reading Position data' });
             return;
         }
-        const positionName = dataPosition.find((p) => p.name === name);
-        if (positionName) {
-            res.status(400).json({ success: false, message: `This position name:${name} is already created` });
+        let positionID = dataPosition.find((p) => p.id === id);
+        if (!positionID) {
+            res.status(404).json({ success: false, message: `Position with number ID ${id} not found` });
             return;
         }
-        const positionID = dataPosition.length + 1;
-        const newPosition = {
-            id: positionID,
+        positionID = {
+            id,
             name,
             salary,
             active: true,
-            isByPass: false
+            isByPass
         };
-        dataPosition.push(newPosition);
+        const index = dataPosition.findIndex((acc) => acc.id === positionID.id);
+        dataPosition[index] = positionID;
         fs_1.default.writeFileSync('./data/position.json', JSON.stringify(dataPosition, null, 2));
-        res.status(200).json({ success: true, message: `Position with name: ${name} have been created sucessfully! ID:${positionID}` });
+        res.status(200).json({ success: true, message: `Position ID:${id}, Name: ${name}, have updated successfully` });
     }
     catch (error) {
         res.status(500).json({ success: false, message: 'Internal server Error', error });
         return;
     }
 });
-exports.default = createPosition;
+exports.default = updatePosition;

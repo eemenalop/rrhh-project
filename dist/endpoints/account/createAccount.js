@@ -38,20 +38,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const fs_1 = __importDefault(require("fs"));
+const getData_1 = require("../../getData");
 const createAccount = (0, express_1.Router)();
 createAccount.use(express_1.default.json());
-const getAccounts = () => {
-    try {
-        const data = fs_1.default.readFileSync('./data/accounts.json', 'utf-8');
-        const parsedData = JSON.parse(data);
-        const account = parsedData;
-        return account;
-    }
-    catch (error) {
-        console.log('Error reading file JSON:', error);
-        return [];
-    }
-};
 // Create Account
 createAccount.post('/create', (req, res) => {
     try {
@@ -60,13 +49,17 @@ createAccount.post('/create', (req, res) => {
             res.status(400).json({ success: false, message: 'You must complete all options' });
             return;
         }
-        const dataAccounts = getAccounts();
-        const existingPersonal_id = dataAccounts.accounts.find((ID) => ID.personal_id === personal_id);
+        const dataAccounts = (0, getData_1.getDatafromJSON)('accounts.json');
+        if (!dataAccounts) {
+            res.status(500).json({ success: false, message: 'Error reading accounts data' });
+            return;
+        }
+        const existingPersonal_id = dataAccounts.find((ID) => ID.personal_id === personal_id);
         if (existingPersonal_id) {
             res.status(400).json({ success: false, message: `This ${personal_id} is already in use` });
             return;
         }
-        const ExistingNewUsername = dataAccounts.accounts.find((u) => u.username === username);
+        const ExistingNewUsername = dataAccounts.find((u) => u.username === username);
         if (ExistingNewUsername) {
             res.status(400).json({ success: false, message: `This ${username} is already in use` });
             return;
@@ -75,7 +68,7 @@ createAccount.post('/create', (req, res) => {
             res.status(400).json({ success: false, message: `Password must has at least 7 letters` });
             return;
         }
-        const newId = dataAccounts.accounts.length + 1;
+        const newId = dataAccounts.length + 1;
         const newAccount = {
             id: newId,
             personal_id: personal_id,
@@ -86,12 +79,13 @@ createAccount.post('/create', (req, res) => {
             position: position,
             active: true
         };
-        dataAccounts.accounts.push(newAccount);
+        dataAccounts.push(newAccount);
         fs_1.default.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null, 2));
         res.status(200).json({ success: true, message: `Account with Username: ${username} have been created sucessfully!` });
     }
     catch (error) {
         res.status(500).json({ success: false, message: 'Internal server Error', error });
+        return;
     }
 });
 exports.default = createAccount;

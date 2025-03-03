@@ -39,13 +39,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const fs_1 = __importDefault(require("fs"));
 const getData_1 = require("../../getData");
-const createPosition = (0, express_1.Router)();
-createPosition.use(express_1.default.json());
-createPosition.post('/create', (req, res) => {
+const deletePosition = (0, express_1.Router)();
+deletePosition.use(express_1.default.json());
+deletePosition.patch('/:id/delete', (req, res) => {
     try {
-        const { name, salary } = req.body;
-        if (!name || !salary) {
-            res.status(400).json({ success: false, message: 'You must complete all options' });
+        const id = parseInt(req.params.id);
+        if (!id) {
+            res.status(400).json({ success: false, message: `Number ID position is required` });
+            return;
+        }
+        if (isNaN(id) || id <= 0) {
+            res.status(400).json({ success: false, message: `Enter a valid number ID position` });
             return;
         }
         const dataPosition = (0, getData_1.getDatafromJSON)('accounts.json');
@@ -53,26 +57,20 @@ createPosition.post('/create', (req, res) => {
             res.status(500).json({ success: false, message: 'Error reading Position data' });
             return;
         }
-        const positionName = dataPosition.find((p) => p.name === name);
-        if (positionName) {
-            res.status(400).json({ success: false, message: `This position name:${name} is already created` });
+        let existingID = dataPosition.find((e) => e.id === id);
+        if (!existingID) {
+            res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
             return;
         }
-        const positionID = dataPosition.length + 1;
-        const newPosition = {
-            id: positionID,
-            name,
-            salary,
-            active: true,
-            isByPass: false
-        };
-        dataPosition.push(newPosition);
+        existingID.active = false;
+        const index = dataPosition.findIndex((acc) => acc.id === existingID.id);
+        dataPosition[index] = existingID;
         fs_1.default.writeFileSync('./data/position.json', JSON.stringify(dataPosition, null, 2));
-        res.status(200).json({ success: true, message: `Position with name: ${name} have been created sucessfully! ID:${positionID}` });
+        res.status(200).json({ success: true, message: `Position ID:${id}, have been deleted successfully`, active: existingID });
     }
     catch (error) {
         res.status(500).json({ success: false, message: 'Internal server Error', error });
         return;
     }
 });
-exports.default = createPosition;
+exports.default = deletePosition;

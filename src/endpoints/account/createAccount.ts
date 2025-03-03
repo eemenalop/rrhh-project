@@ -1,21 +1,11 @@
 import express, { Request, Response, Router } from 'express';
 import { Account } from '../../types';
 import fs from 'fs';
+import { getDatafromJSON } from '../../getData';
 
 const createAccount = Router();
 createAccount.use(express.json());
 
-const getAccounts = ()=>{
-    try {
-        const data = fs.readFileSync('./data/accounts.json', 'utf-8');
-        const parsedData= JSON.parse(data);
-        const account = parsedData;
-        return account;
-    } catch (error) {
-        console.log('Error reading file JSON:', error);
-        return []
-    }
-}
 // Create Account
 createAccount.post('/create', (req: Request, res: Response) => {
     try {
@@ -25,14 +15,22 @@ createAccount.post('/create', (req: Request, res: Response) => {
         res.status(400).json({ success: false, message: 'You must complete all options' })
         return;
     }
-    const dataAccounts = getAccounts();
-    const existingPersonal_id = dataAccounts.accounts.find((ID: Account) =>ID.personal_id === personal_id)
+        
+        const dataAccounts = getDatafromJSON<Account[]>('accounts.json');
+        
+    if (!dataAccounts) {
+        res.status(500).json({ success: false, message: 'Error reading accounts data' });
+        return;
+    }
+        
+        const existingPersonal_id = dataAccounts.find((ID) => ID.personal_id === personal_id)
+        
     if (existingPersonal_id) {
         res.status(400).json({ success: false, message: `This ${personal_id} is already in use` })
         return;
     }
 
-    const ExistingNewUsername = dataAccounts.accounts.find((u: Account) =>u.username === username)
+    const ExistingNewUsername = dataAccounts.find((u: Account) =>u.username === username)
     if (ExistingNewUsername) {
         res.status(400).json({ success: false, message: `This ${username} is already in use` });
         return;
@@ -43,7 +41,7 @@ createAccount.post('/create', (req: Request, res: Response) => {
         return;
     }
 
-    const newId = dataAccounts.accounts.length + 1;
+    const newId = dataAccounts.length + 1;
 
     const newAccount: Account = {
         id: newId,
@@ -56,12 +54,13 @@ createAccount.post('/create', (req: Request, res: Response) => {
         active: true
     }
 
-    dataAccounts.accounts.push(newAccount);
+    dataAccounts.push(newAccount);
     fs.writeFileSync('./data/accounts.json', JSON.stringify(dataAccounts, null, 2));
 
     res.status(200).json({success: true, message: `Account with Username: ${username} have been created sucessfully!`})
     } catch (error) {
-        res.status(500).json({success: false, message: 'Internal server Error', error})
+        res.status(500).json({ success: false, message: 'Internal server Error', error });
+        return;
     }
     
 

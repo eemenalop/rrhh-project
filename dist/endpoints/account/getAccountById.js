@@ -34,24 +34,34 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
-const index_1 = require("../../index");
+const getData_1 = require("../../getData");
 const getAccountByID = (0, express_1.Router)();
 getAccountByID.use(express_1.default.json());
 getAccountByID.get('/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    if (!id) {
-        res.status(400).json({ success: false, message: `Number ID account is required` });
+    try {
+        const id = parseInt(req.params.id);
+        if (!id) {
+            res.status(400).json({ success: false, message: `Number ID account is required` });
+            return;
+        }
+        if (isNaN(id) || id <= 0) {
+            res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
+            return;
+        }
+        const dataAccounts = (0, getData_1.getDatafromJSON)('accounts.json');
+        if (!dataAccounts) {
+            res.status(500).json({ success: false, message: 'Error reading accounts data' });
+            return;
+        }
+        const account = dataAccounts.find((a) => a.id === id);
+        if (!account) {
+            res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
+        }
+        res.status(200).json(account);
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: 'Internal server Error', error });
         return;
     }
-    if (isNaN(id) || id <= 0) {
-        res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
-        return;
-    }
-    const dataAccounts = (0, index_1.getAccounts)();
-    const account = dataAccounts.find((a) => a.id === id);
-    if (!account) {
-        res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
-    }
-    res.status(200).json(account);
 });
 exports.default = getAccountByID;

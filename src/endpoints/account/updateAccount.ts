@@ -1,7 +1,7 @@
 import express, {Request, Response, Router} from 'express'
 import fs from 'fs';
 import { Account } from '../../types';
-import { getAccounts } from '../../index';
+import { getDatafromJSON } from '../../getData';
 
 const updateAccount = Router();
 updateAccount.use(express.json());
@@ -25,7 +25,12 @@ updateAccount.put('/:id/update', (req: Request, res: Response)=>{
             res.status(400).json({ success: false, message: 'You must complete all options'})
             return;
         }
-        const dataAccounts = getAccounts();
+        const dataAccounts = getDatafromJSON<Account[]>('accounts.json');
+        
+        if (!dataAccounts) {
+            res.status(500).json({ success: false, message: 'Error reading accounts data' });
+            return;
+        }
         let existingID = dataAccounts.find((e: Account)=>e.id === id);
         if(!existingID){
         res.status(404).json({success: false, message: `Account with number ID ${id} not found`});
@@ -49,7 +54,8 @@ updateAccount.put('/:id/update', (req: Request, res: Response)=>{
     res.status(200).json({success: true, message: `Account ID:${id} Username:${username}, have updated successfully`});
 
     } catch (error) {
-        res.status(500).json({success: false, message: 'Internal error server', error})
+        res.status(500).json({ success: false, message: 'Internal error server', error });
+        return;
     }
 });
 

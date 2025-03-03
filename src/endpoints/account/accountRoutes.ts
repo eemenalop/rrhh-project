@@ -7,9 +7,9 @@ import deleteAccount from "./deleteAccount";
 
 const accountRouter = Router();
 
-accountRouter.post('/create', createAccount);
 accountRouter.get('/all', getAllAccounts);
 accountRouter.get('/:id', getAccountByID);
+accountRouter.post('/create', createAccount);
 accountRouter.put('/:id/update', updateAccount);
 accountRouter.patch('/:id/delete', deleteAccount);
 

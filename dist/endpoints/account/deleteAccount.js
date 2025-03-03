@@ -38,7 +38,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const fs_1 = __importDefault(require("fs"));
-const index_1 = require("../../index");
+const getData_1 = require("../../getData");
 const deleteAccount = (0, express_1.Router)();
 deleteAccount.use(express_1.default.json());
 deleteAccount.patch('/:id/delete', (req, res) => {
@@ -52,7 +52,11 @@ deleteAccount.patch('/:id/delete', (req, res) => {
             res.status(400).json({ success: false, message: `Enter a  valid number ID Account` });
             return;
         }
-        const dataAccounts = (0, index_1.getAccounts)();
+        const dataAccounts = (0, getData_1.getDatafromJSON)('accounts.json');
+        if (!dataAccounts) {
+            res.status(500).json({ success: false, message: 'Error reading accounts data' });
+            return;
+        }
         let existingID = dataAccounts.find((e) => e.id === id);
         if (!existingID) {
             res.status(404).json({ success: false, message: `Account with number ID ${id} not found` });
@@ -66,6 +70,7 @@ deleteAccount.patch('/:id/delete', (req, res) => {
     }
     catch (error) {
         res.status(500).json({ success: false, message: 'Internal server Error', error });
+        return;
     }
 });
 exports.default = deleteAccount;
