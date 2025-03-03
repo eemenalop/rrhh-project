@@ -10,7 +10,7 @@ createEmployee.post('/create', (req: Request, res: Response) => {
             const { personal_id, name, lastname, pricePerHours, position }: Employee = req.body;
         
         if (!personal_id || !name || !lastname || !position) {
-            res.status(400).json({ success: false, message: 'You must complete all options' })
+            res.status(400).json({ success: false, message: 'You must complete all options: Personal ID, Name, Last Name, Price per Hours and Position' })
             return;
         }
             
@@ -41,7 +41,7 @@ createEmployee.post('/create', (req: Request, res: Response) => {
         }
     
         dataEmployee.push(newEmployee);
-        fs.writeFileSync('./data/accounts.json', JSON.stringify(dataEmployee, null, 2));
+        fs.writeFileSync('./data/employees.json', JSON.stringify(dataEmployee, null, 2));
     
         res.status(200).json({success: true, message: `Employee have been created sucessfully!`})
         } catch (error) {

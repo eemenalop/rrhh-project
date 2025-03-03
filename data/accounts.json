@@ -11,52 +11,12 @@
   },
   {
     "id": 2,
-    "personal_id": "40235685965",
-    "name": "Jose",
-    "lastname": "Lopez",
-    "username": "jlopez",
-    "password": "testpassword",
-    "possition": "",
-    "active": true
-  },
-  {
-    "id": 3,
-    "personal_id": "0012581263525",
-    "name": "Randy",
-    "lastname": "Johnson",
-    "username": "rjoohnson",
-    "password": "testpassword",
-    "position": "Admin",
-    "active": true
-  },
-  {
-    "id": 4,
-    "personal_id": "40225369635",
-    "name": "Kiss",
+    "personal_id": "40226954537",
+    "name": "Kissauris",
     "lastname": "Tejada",
     "username": "ktejada",
     "password": "testpassword",
     "position": "Analyst",
     "active": true
-  },
-  {
-    "id": 5,
-    "personal_id": "402246321625",
-    "name": "meteo",
-    "lastname": "cabrera",
-    "username": "mcabrera",
-    "password": "mcabrera102",
-    "position": "Admin",
-    "active": false
-  },
-  {
-    "id": 6,
-    "personal_id": "51215554545",
-    "name": "ken",
-    "lastname": "grullon",
-    "username": "kgrullon",
-    "password": "mcabrera102",
-    "position": "Admin",
-    "active": false
   }
 ]

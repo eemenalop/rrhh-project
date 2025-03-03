@@ -1,11 +1,20 @@
 [
-    {
-        "id": 1,
-        "personal_id": "40224175485",
-        "name": "Edgar",
-        "lastname": "Mena",
-        "pricePerHour": 0,
-        "position": "",
-        "active": true
-    }
+  {
+    "id": 1,
+    "personal_id": "40224175485",
+    "name": "Edgar",
+    "lastname": "Mena",
+    "pricePerHour": 0,
+    "position": "",
+    "active": true
+  },
+  {
+    "id": 2,
+    "personal_id": "40226954537",
+    "name": "Kissauris",
+    "lastname": "Tejada",
+    "pricePerHours": 35,
+    "position": "Analyst",
+    "active": true
+  }
 ]

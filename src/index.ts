@@ -12,12 +12,10 @@ import { genToken, getDatafromJSON, getTokens } from './getData';
 
 const app = express();
 const PORT = 4000;
-
 app.use(express.json());
 app.use('/account', accountRouter);
 app.use('/position', positionsRouter);
 app.use('/employee', employeeRouter);
-
 app.use('/dist', express.static('dist'));
 app.use(express.static("public"));
 app.use(express.static(path.join(__dirname, '../public')));

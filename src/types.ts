@@ -11,7 +11,7 @@ export interface Account{
 
 export interface Employee {
     id: number,
-    personal_id: number,
+    personal_id: string,
     name: string,
     lastname: string,
     pricePerHours: number,

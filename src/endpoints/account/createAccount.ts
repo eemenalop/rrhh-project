@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from 'express';
-import { Account } from '../../types';
+import { Account, Employee } from '../../types';
 import fs from 'fs';
 import { getDatafromJSON } from '../../getData';
 
@@ -9,15 +9,13 @@ createAccount.use(express.json());
 // Create Account
 createAccount.post('/create', (req: Request, res: Response) => {
     try {
-        const { personal_id, name, lastname, username, password, position }: Account = req.body;
+        const { personal_id, username, password }: Account = req.body;
     
-    if (!personal_id || !name || !lastname || !username || !password || !position) {
-        res.status(400).json({ success: false, message: 'You must complete all options' })
+    if (!personal_id || !username || !password) {
+        res.status(400).json({ success: false, message: 'You must complete all options, Personal ID, Username and Password' })
         return;
-    }
-        
-        const dataAccounts = getDatafromJSON<Account[]>('accounts.json');
-        
+    } 
+    const dataAccounts = getDatafromJSON<Account[]>('accounts.json');    
     if (!dataAccounts) {
         res.status(500).json({ success: false, message: 'Error reading accounts data' });
         return;
@@ -40,18 +38,27 @@ createAccount.post('/create', (req: Request, res: Response) => {
         res.status(400).json({ success: false, message: `Password must has at least 7 letters` });
         return;
     }
-
+    const dataEmployee = getDatafromJSON<Employee[]>('employees.json');
+    if (!dataEmployee) {
+        res.status(500).json({ success: false, message: 'Error reading accounts data' });
+        return;
+    }
+        const employee = dataEmployee.find((e) => e.personal_id === personal_id);
+        if (!employee) {
+            res.status(500).json({ success: false, message: 'Error reading accounts data' });
+            return;
+        }
+        
     const newId = dataAccounts.length + 1;
-
     const newAccount: Account = {
         id: newId,
         personal_id: personal_id,
-        name: name,
-        lastname: lastname,
+        name: employee.name,
+        lastname: employee.lastname,
         username: username,
         password: password,
-        position: position,
-        active: true
+        position: employee.position,
+        active: employee.active
     }
 
     dataAccounts.push(newAccount);
