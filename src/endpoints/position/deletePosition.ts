@@ -17,7 +17,7 @@ deletePosition.patch('/:id/delete', (req: Request, res: Response) => {
         res.status(400).json({ success: false, message: `Enter a valid number ID position` });
         return;
         }
-            const dataPosition = getDatafromJSON<Position[]>('accounts.json');
+        const dataPosition = getDatafromJSON<Position[]>('position.json');
                         
         if (!dataPosition) {
         res.status(500).json({ success: false, message: 'Error reading Position data' });

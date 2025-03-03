@@ -13,7 +13,7 @@ createPosition.post('/create', (req: Request, res: Response)=>{
             res.status(400).json({ success: false, message: 'You must complete all options'})
             return;
         }
-            const dataPosition = getDatafromJSON<Position[]>('accounts.json');
+            const dataPosition = getDatafromJSON<Position[]>('position.json');
                 
         if (!dataPosition) {
             res.status(500).json({ success: false, message: 'Error reading Position data' });

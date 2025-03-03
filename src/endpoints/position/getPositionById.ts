@@ -17,7 +17,7 @@ getPositionByID.get('/:id', (req: Request, res: Response)=>{
             res.status(400).json({success: false, message: `Enter a  valid number ID position`});
             return;
         }
-            const dataPosition = getDatafromJSON<Position[]>('accounts.json');
+        const dataPosition = getDatafromJSON<Position[]>('position.json');
                         
         if (!dataPosition) {
         res.status(500).json({ success: false, message: 'Error reading Position data' });
@@ -25,7 +25,7 @@ getPositionByID.get('/:id', (req: Request, res: Response)=>{
         }
         const position = dataPosition.find((p)=> p.id === id);
         if(!position){
-            res.status(404).json({success: false, message: `Account with number ID ${id} not found`})
+            res.status(404).json({success: false, message: `Position with number ID ${id} not found`})
             return;
         }
             res.status(200).json(position);

@@ -16,7 +16,7 @@ const PORT = 4000;
 app.use(express.json());
 app.use('/account', accountRouter);
 app.use('/position', positionsRouter);
-app.use('/position', employeeRouter);
+app.use('/employee', employeeRouter);
 
 app.use('/dist', express.static('dist'));
 app.use(express.static("public"));

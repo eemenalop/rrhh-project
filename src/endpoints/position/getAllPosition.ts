@@ -7,7 +7,7 @@ import { Position } from '../../types';
 const getAllPosition = Router();
 
 getAllPosition.get('/all', (req: Request, res: Response)=>{
-    const dataPosition = getDatafromJSON<Position>('position.json');
+    const dataPosition = getDatafromJSON<Position[]>('position.json');
     try {
         res.status(200).json(dataPosition);
     } catch (error) {

@@ -2,8 +2,10 @@
     {
         "id": 1,
         "personal_id": "40224175485",
-        "fullName": "Edgar Mena",
-        "role": "",
+        "name": "Edgar",
+        "lastname": "Mena",
+        "pricePerHour": 0,
+        "position": "",
         "active": true
     }
 ]

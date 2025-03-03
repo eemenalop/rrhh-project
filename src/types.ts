@@ -9,6 +9,16 @@ export interface Account{
     active: boolean
 }
 
+export interface Employee {
+    id: number,
+    personal_id: number,
+    name: string,
+    lastname: string,
+    pricePerHours: number,
+    position: string,
+    active: boolean
+}
+
 export interface Position {
     id: number,
     name: string,
@@ -17,14 +27,12 @@ export interface Position {
     isByPass: boolean
 }
 
-export interface Employee {
-    id: number,
-    personal_id: number,
-    fullName: string,
-    priceHours: number,
+export interface PositionTI {
     position: string,
-    active: boolean
+    active: boolean,
+    isByPass: boolean
 }
+
 export interface TimeLog{
     id: number,
     userId: number,
